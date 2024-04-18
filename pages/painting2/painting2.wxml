@@ -26,7 +26,31 @@
 
   <view class="divLine"/>
   <!-- 涂鸦区 -->
-  <view style="flex: 1; position: relative;" class="failText" wx:if="{{!hasChoosedImg}}" catch:tap="openFile">没有选择照片，点击选择</view>
+  <view style="flex: 1; position: relative; " class="failText" wx:if="{{!hasChoosedImg && has_migan}}">
+    <button bindtap="openFile" class="load-pic-btn" >选择照片</button>
+  </view>
+  
+  
+<view class="tips" style="flex: 1; position: relative; margin: 15rpx" decode="true" wx:if="{{!has_migan}}">
+  <text user-select="true" decode="true" space="ensp">
+😊 <text class="important-text">使用方法：\n</text>
+    <text class="important-text">1. 📥 下载模型文件</text><br/>
+请先通过浏览器下载模型文件到本地<br/>
+      <text user-select="true" space="ensp" class="link" catch:tap="copyLink">https://hf-mirror.com/lxfater/inpaint-web/resolve/main/migan.onnx</text><br/>
+  </text>
+    <text class="important-text">2. ➡️ 把模型文件分享到“文件传输助手”</text><br/>
+  <image class="image" src="../../static/pic/zhushou_share.png"  mode="aspectFit"  style="height: 200rpx;" />
+  <text user-select="true" decode="true" space="ensp">
+    <text class="important-text">3. ✔️ 加载模型文件</text><br/>
+点击“加载模型”按钮，从文件传输助手选择模型文件，加载进来。<br/> 
+  </text>
+  <image class="image" src="../../static/pic/zhushou_select.png"  mode="aspectFit"  style="height: 200rpx;"  />
+  <text user-select="true" decode="true" space="ensp">
+    <text class="important-text">以上，就可以正常使用了。</text>
+Yes，是免费的哦。😉虽然有一点点小麻烦😅<br/>
+  </text>
+  <button bindtap="loadModel" class="load-model-btn">加载模型</button>
+</view>
 
   <view wx:if="{{hasChoosedImg}}" style="flex: 1; position: relative;" catch:touchstart="hideBarsHandler">
     <image src="{{isCropped ? croppedCover: cover}}"
@@ -92,7 +116,7 @@
       </view>
     </view>
     <view class="bars {{showBars && 'show'}}" style="flex: 1; z-index: 999;" wx:if="{{showBars}}">
-      <button class="mini-btn" catch:tap="reloadModel">重新下载模型</button>
+      <button class="mini-btn" catch:tap="reloadModel">重新加载模型</button>
     </view>
   </view>
 

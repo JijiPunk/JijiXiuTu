@@ -1,25 +1,17 @@
-# 照片修复小小助手 (Inpaint_wechat)
-照片修复小小助手是一款快速P图微信小程序，用来消除图片中指定的人和物，基于微信AI能力，纯客户端实现，无服务端。
+# 吉吉修图 (Inpaint_wechat)
+吉吉修图是一款快速P图微信小程序（修改自Inpaint_wechat），用来消除图片中指定的人和物，基于微信AI能力，纯客户端实现，无服务端。
 
 
 本程序借鉴了 MI-GAN 原项目和 inpaint_web 网页实现项目的逻辑以及部分代码，代码开源。
 
 鉴于微信小程序仅支持有限的算子，为了弥补这一限制，本程序采用了 WebAssembly (wasm) 技术，并结合适配微信的 OpenCV 技术，以实现对模型的预处理和后处理。
 
-Inpaint_wechat is a WeChat mini-program based on the WeChat AI capabilities, implementing the functionality of inpainting and repairing selected areas in images,  which is purely implemented by the client and has no server.
-
-
-The program draws inspiration from the logic and some code of the original MI-GAN project and inpaint_web project.
-
-Given the limited support for operators in WeChat mini-programs, to address this constraint, the program utilizes WebAssembly (wasm) technology. 
-Additionally, it integrates with WeChat-adapted OpenCV techniques to achieve model preprocessing and post-processing. 
-
 ## 特点： 
 - 手机操作，快速去除图片中的杂物，是发朋友圈图片和其他类似需求的好帮手。 
 - 去水印，去字幕，去掉闲杂人物。。。 多尝试几次，总会有惊喜等着你。
 - 图片数据不上传，100% 确保隐私。
 
-注释：小程序首次执行时，会自动下载约30M AI模型到本机。
+注释：小程序首次执行时，需要下载约30M AI模型到本机。
 
 ## Demo（1.选择图片  2.涂抹遮罩  3.消除）
 
@@ -86,11 +78,6 @@ Please note that this operation is irreversible.
   
      调用AI模型实现目标自动识别。 已完成技术调研，由于微信算子的限制，需要接入后端。暂无开发计划。
 
-## Contact
-
-[![Twitter Follow](https://img.shields.io/twitter/follow/zhiyuan?style=social)](https://x.com/zhiyuan54030554)
-
-[📺 bilibili](https://space.bilibili.com/2031846058)
 
 ## Reference
 

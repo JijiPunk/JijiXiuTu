@@ -5,5 +5,28 @@
     "compileHotReLoad": true,
     "urlCheck": false
   },
-  "libVersion": "3.2.5"
+  "libVersion": "3.2.5",
+  "condition": {
+    "miniprogram": {
+      "list": [
+        {
+          "name": "pic",
+          "pathName": "pages/painting2/painting2",
+          "query": "",
+          "launchMode": "default",
+          "scene": 1173,
+          "referrerInfo": {
+            "materials": [
+              {
+                "type": "image/png",
+                "path": "C:\\Users\\User\\Pictures\\jiji_516x525.png",
+                "name": "jiji_516x525.png",
+                "size": 186542
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
 }

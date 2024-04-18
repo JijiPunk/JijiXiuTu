@@ -146,7 +146,49 @@ slider {
 }
 
 .divLine {
-  height: 3rpx;
-  background: linear-gradient(to right, #ead6ee, #a0f1ea);
+  height: 1rpx;
+  background: #ccc;
+}
+
+.link {
+    color: #007bff;
+    text-decoration: underline;
+}
+
+.tips .image{
+    display: block;
+}
+.important-text {
+  font-weight: bold;
+  color: #333;
+}
+.load-model-btn{
+  background-color: #4CAF50; /* 设置背景色 */
+  border: none; /* 移除边框 */
+  color: white; /* 设置文本色为白色 */
+  text-align: center; /* 文本居中对齐 */
+  text-decoration: none; /* 移除文本装饰线条 */
+  display: block; /* 设置为内连块级元素 */
+  font-size: 16px; /* 设置字体大小 */
+  margin: 10px 10px; /* 设置边缘间距 */
+  cursor: pointer; /* 设置光标为指针形状 */
+  border-radius: 12px; /* 设置边框半径产生圆角效果 */
+}
+
+.load-pic-btn{
+  background-color: #4CAF50; /* 设置背景色 */
+  border: none; /* 移除边框 */
+  color: white; /* 设置文本色为白色 */
+  text-align: center; /* 文本居中对齐 */
+  text-decoration: none; /* 移除文本装饰线条 */
+  display: block; /* 设置为内连块级元素 */
+  font-size: 16px; /* 设置字体大小 */
+  margin: 30px 100px; /* 设置边缘间距 */
+  cursor: pointer; /* 设置光标为指针形状 */
+  border-radius: 12px; /* 设置边框半径产生圆角效果 */
+}
+
+.load-model-btn:hover{
+  background-color: #45a049; /*设置鼠标悬停时的背景色 */
 }
 

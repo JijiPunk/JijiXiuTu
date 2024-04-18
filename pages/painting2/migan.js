@@ -12,6 +12,7 @@ export class Migan {
   res = 512;
   padding = 128;
   debugMode = true;
+  has_migan = false;
 
   constructor() {
     this.ready = false;
@@ -21,51 +22,75 @@ export class Migan {
   async load(forcedLoad) {
     const modelPath = `${wx.env.USER_DATA_PATH}/migan.onnx`;
     console.log(modelPath);
-    if (forcedLoad) {
-      await this.forcedLoad();
-    } else {
-      // 判断之前是否已经下载过onnx模型
-      try {
-        await wx.getFileSystemManager().accessSync(modelPath);
-        console.log("File already exists at: " + modelPath);
-      } catch (error) {
-        console.error(error);
+  
+    try {
+      if (forcedLoad) {
         await this.forcedLoad();
+      } else {
+        // 判断之前是否已经下载过onnx模型
+        try {
+          wx.getFileSystemManager().accessSync(modelPath);
+          console.log("File already exists at: " + modelPath);
+          const stats = wx.getFileSystemManager().statSync(modelPath);
+          console.log("File size: " + stats.size + " bytes");
+          this.has_migan = true;
+        } catch (error) {
+          console.error(error);
+          await this.forcedLoad();
+        }
       }
+    } catch (error) {
+      throw error;
     }
     // 创建推断会话
-    await this.createInferenceSession(modelPath);
+    await this.createInferenceSession(modelPath, forcedLoad);
+    console.log("start resolve: ", this.has_migan);
+    return this.has_migan;
   }
 
-  async forcedLoad() {
+  forcedLoad() {
+    return new Promise((resolve, reject) => {
       const modelPath = `${wx.env.USER_DATA_PATH}/migan.onnx`;
-      console.log("Begin downloading model");
-      wx.showToast({
-        title: '尝试下载模型',
-        icon: 'success',
-        duration: 2000
+      wx.chooseMessageFile({
+        count: 1,
+        type: 'file',
+        extension: ['onnx', 'ONNX'],
+        success: (res) => {
+          console.log('res:', res)
+          // tempFilePath可以作为img标签的src属性显示图片
+          const tempFilePath = res.tempFiles[0].path;
+          // 保存模型到本地
+          wx.getFileSystemManager().saveFile({
+            tempFilePath: tempFilePath,
+            filePath: modelPath,
+            success: () => { // 文件成功保存后              
+              this.has_migan = true;
+              console.log("Saved onnx model at path: " + modelPath);
+              wx.showToast({
+                title: '开始加载模型',
+                icon: 'loading',
+                duration: 2000
+              })
+              resolve(); // resolve promise after file check successful
+            },
+            
+            fail: (error) => { // 保存文件失败时
+              console.log("Failed to save file: " + modelPath);
+              reject(error); // reject the promise if save file failed
+            }
+          });
+        },
+        fail: (error) => { // 选择文件失败时
+          console.log("Failed to choose file");
+          reject(error); // reject the promise if choose file failed
+        },
       })
-      const url = 'https://test-1306637385.cos.ap-nanjing.myqcloud.com/migan.onnx'
-      try {
-        // 下载模型
-        const downloadResult = await this.downloadFile(url, (r) => {
-          // console.log(`Download progress: ${r.progress}%, ${r.totalBytesWritten}B downloaded, ${r.totalBytesExpectedToWrite}B total`);
-        });
-
-        // 保存模型到本地
-        await wx.getFileSystemManager().saveFile({
-          tempFilePath: downloadResult.tempFilePath,
-          filePath: modelPath,
-        });
-
-        console.log("Saved onnx model at path: " + modelPath);
-      } catch (downloadError) {
-        console.error(downloadError);
-      }
+    });
   }
 
-  // 创建推断会话
-  async createInferenceSession(modelPath) {
+// 创建推断会话
+createInferenceSession(modelPath, forcedLoad) {
+  return new Promise((resolve, reject) => {
     try {
       this.session = wx.createInferenceSession({
         model: modelPath,
@@ -82,24 +107,30 @@ export class Migan {
           icon: 'error',
           duration: 2000
         })
+        reject(error);  // 如果发生错误，我们 reject 这个 promise
       });
+
       // 等待会话加载完成
       this.session.onLoad(() => {
         this.ready = true;
         console.log("load ok");
-        wx.showToast({
-          title: '模型加载成功',
-          icon: 'success',
-          duration: 4000
-        })
+        if(forcedLoad){
+          wx.showToast({
+            title: '模型加载成功',
+            icon: 'success',
+            duration: 2000
+          })
+        }
+        resolve();  // 模型加载成功时，我们 resolve 这个 promise
       });
 
     } catch (error) {
       // 处理在过程中可能发生的任何错误
       console.error('创建推断会话时出错：');
-      throw error; // 将错误传递给调用者
+      reject(error);  // 如果在方法体中发生异常，我们 reject 这个 promise
     }
-  }
+  });
+}
 
 
   async downloadFile(url, onCall = () => {}) {
@@ -119,7 +150,7 @@ export class Migan {
               wx.showToast({
                 title: '模型下载成功',
                 icon: 'success',
-                duration: 2000
+                duration: 3000
               })
               resolve(res);
             }
@@ -152,8 +183,8 @@ export class Migan {
 
   async execute(image, mask, src) {
     this.showDebugLog(" - the image is processing");
-    wx.showLoading({
-      title: '正在处理中，请耐心等待。。。',
+    wx.showLoading({      
+      title: '🍵 正在调用模型修图',
     })
     // 获取裁剪边界框坐标
     const [x_min, x_max, y_min, y_max] = this.getMaskedBbox(mask);

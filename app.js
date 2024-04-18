@@ -9,6 +9,15 @@ App({
 
     // 调用获取用户信息的方法
     this.getUserInfo();
+
+    wx.onAppShow((res) => {
+      if(res.scene === 1173){        
+        this.globalData.tmpPicPath = res.forwardMaterials[0].path
+      }
+      else{
+        this.globalData.tmpPicPath = null
+      }
+    });
   },
 
   getUserInfo: function() {
@@ -44,6 +53,7 @@ App({
 
   globalData: {
     userInfo: null,
-    returnFromCropper: false
+    returnFromCropper: false,
+    tmpPicPath: null,
   }
 });

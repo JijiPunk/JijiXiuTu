@@ -9,5 +9,15 @@
     "navigationBarBackgroundColor": "#fff",
     "navigationBarTitleText": "WeChat",
     "navigationBarTextStyle": "black"
-  }
+  },
+  "supportedMaterials": [
+    {
+        "materialType": "image/*",
+        "name": "${nickname}",
+        "desc": "消除图片多余画面",
+        "path": "pages/painting2/painting2"
+    }
+  ],
+  
+  "lazyCodeLoading": "requiredComponents"
 }

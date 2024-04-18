@@ -1,7 +1,7 @@
 {
-    "navigationBarTitleText": "照片修复小小助手",
-    "navigationBarBackgroundColor": "#9cf",
-    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "吉吉修图",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTextStyle": "black",
     "disableScroll": true,
     "usingComponents": {
         "image-cropper": "../../component/image-cropper/image-cropper"

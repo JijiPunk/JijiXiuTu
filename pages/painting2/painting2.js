@@ -23,6 +23,7 @@ Page({
     windowHeight: 0,
     dpr: 1,
     migan: null,
+    has_migan: true,
     hasChoosedImg: false,
     hasMask: false,
     isCropped: false,
@@ -31,14 +32,38 @@ Page({
       startX: 0,
       startY: 0,
       scale: 1
-    }
+    },
+    imgByOpen: false,
   },
+  
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
     this.unlinkAll();
     let that = this;
+    
+    const fs = wx.getFileSystemManager()
+    // 判断文件/目录是否存在
+    fs.access({
+      path: `${wx.env.USER_DATA_PATH}/migan.onnx`,
+      success(res) {
+        // 文件存在 
+        that.setData({
+          has_migan: true
+        });
+        console.log(res) 
+        that.loadModel()
+      },
+      fail(res) {
+        // 文件不存在或其他错误
+        that.setData({
+          has_migan: false
+        });
+        console.log('模型文件不存在，请点击按钮加载。')
+      }
+    })
+
     wx.getSystemInfo({
       success: function (res) {
         that.setData({
@@ -56,27 +81,40 @@ Page({
       hasPreviousCover: false
     });
 
-    // Load the module
-    wx.showLoading({
-      title: '模型正在加载...'
-    });
+
+  },
+
+  loadModel() {
+    let that = this;
+    let ishas_migan = false
     const migan = new Migan();
-    migan.load(false).then(() => {
-      wx.hideLoading();
+    var has_migan = this.data.has_migan
+    migan.load(!has_migan).then((resolvedhas_migan) => {
+      ishas_migan = resolvedhas_migan
+      console.log('has_migan：', ishas_migan);
+      that.setData({
+        migan: migan,
+        has_migan: ishas_migan
+      });
     }).catch(err => {
       console.log('模型加载报错：', err);
-      wx.showToast({
-        title: '模型加载失败，请手动加载模型',
-        icon: 'none',
-        duration: 2000,
-      });
+    });   
+  },
 
+  copyLink() {
+    wx.setClipboardData({
+      data: 'https://hf-mirror.com/lxfater/inpaint-web/resolve/main/migan.onnx',
+      success(res) {
+        wx.showToast({
+          title: '链接已复制',
+          icon: 'none',
+          duration: 2000,
+        });
+      },
+      fail(res) {
+        console.error('复制链接失败', res);
+      }
     });
-    this.setData({
-      migan: migan
-    });
-    wx.hideLoading();
-    //this.initCanvas();
   },
 
   // 页面卸载 把字号选择的颜色和透明度保存
@@ -123,6 +161,38 @@ Page({
   },
 
   async onShow() {
+    const that = this;
+    var tmpPicPath = getApp().globalData.tmpPicPath
+    console.log('tmpPicPath: ', tmpPicPath)
+    if (tmpPicPath && !this.data.imgByOpen) {
+      var fileName = tmpPicPath.substr(tmpPicPath.lastIndexOf("/") + 1);
+      var picPath = `${wx.env.USER_DATA_PATH}/pic_inpaint_${fileName}`;
+      console.log('picPath: ', picPath)
+      wx.getFileSystemManager().copyFileSync(tmpPicPath, picPath)
+      wx.getImageInfo({
+        src: picPath,
+        success: function (res) {
+          console.log('here:', res)
+          console.log('width:', res.width)
+          let [height, width] = [Math.floor(that.data.windowWidth / res.width * res.height), that.data.windowWidth];
+          if (height > that.data.windowHeight - 120) {
+            height = that.data.windowHeight - 120;
+            width = Math.floor(height / res.height * res.width);
+          };
+          if (that.data.isCropped) {
+            that.clearCroppedImage();
+          }
+          that.setData({
+            canvasHeight: height,
+            canvasWidth: width,
+            cover: picPath,
+            hasChoosedImg: true,
+          });
+          that.initCanvas();
+        }
+
+      })
+    } 
     // 在这里处理从Cropper页面返回时的逻辑
     if (getApp().globalData.returnFromCropper) {
       if (this.data._isCropChanged) {
@@ -140,21 +210,21 @@ Page({
 
   onShareAppMessage: function (options) {
     return {
-      title: '照片修复小小助手',
+      title: '吉吉修图',
       imageUrl: '/images/mini_code.jpg',
       path: '/pages/painting2/painting2'
     }
   },
   onShareTimeline: function () {
     return {
-      title: '照片修复小小助手',
+      title: '吉吉修图',
       imageUrl: '/images/mini_code.jpg',
       query: ''
     }
   },
   onAddToFavorites: function (options) {
     return {
-      title: '照片修复小小助手',
+      title: '吉吉修图',
       imageUrl: '/images/mini_code.jpg',
       query: '',
     }
@@ -211,7 +281,8 @@ Page({
       context.lineWidth = This.selectSize;
       this.setData({
         canvasElement: canvas,
-        canvasContext: context,
+        canvasContext: context,        
+        imgByOpen: false,
       })
     })
   },
@@ -426,10 +497,10 @@ Page({
           fail: reject
         });
       });
-      wx.showToast({
-        title: '生成图片已成功保存到相册',
-        icon: 'none'
-      });
+      // wx.showToast({
+      //   title: '生成图片已成功保存到相册',
+      //   icon: 'none'
+      // });
       this.setPreviousCover();
       // 清理操作
       this.clearRect();
@@ -479,6 +550,7 @@ Page({
               canvasWidth: width,
               cover: picPath,
               hasChoosedImg: true,
+              imgByOpen: true,
             });
             that.initCanvas();
           }
