@@ -1,6 +1,7 @@
-# 吉吉修图 (Inpaint_wechat)
+# 吉吉修图
 吉吉修图是一款快速P图微信小程序（修改自Inpaint_wechat），用来消除图片中指定的人和物，基于微信AI能力，纯客户端实现，无服务端。
 
+202404：原项目Inpaint_wechat目前貌似无法自动下载模型文件，导致暂时无法使用。
 
 本程序借鉴了 MI-GAN 原项目和 inpaint_web 网页实现项目的逻辑以及部分代码，代码开源。
 
@@ -11,33 +12,7 @@
 - 去水印，去字幕，去掉闲杂人物。。。 多尝试几次，总会有惊喜等着你。
 - 图片数据不上传，100% 确保隐私。
 
-注释：小程序首次执行时，需要下载约30M AI模型到本机。
-
-## Demo（1.选择图片  2.涂抹遮罩  3.消除）
-
-<kbd>
-<img src="media/002.jpg" alt="照片修复小助手" width="600"/>
-</kbd>
-
-<kbd>
-<img src="media/001.jpg" alt="照片修复小助手" width="600"/>
-</kbd>
-
-<kbd>
-<img src="media/003.jpg" alt="照片修复小助手" width="600"/>
-</kbd>
-
-<kbd>
-<img src="media/004.jpg" alt="照片修复小助手" width="600"/>
-</kbd>
-
-<kbd>
-<img src="media/005.jpg" alt="照片修复小助手" width="600"/>
-</kbd>
-
-## Video Demo（视频演示）
-
-https://github.com/shifu-group/inpaint_wechat/assets/104042064/06260321-8666-4950-bf9d-116485d5dc0a
+注释：小程序首次执行时，需要手动下载约30M AI模型到本机。
 
 ## QR Code for the Wechat App （扫描微信小程序二维码打开小程序）
 ![照片修复小助手](images/mini_code.jpg)
@@ -53,33 +28,13 @@ Please note that this operation is irreversible.
 
 如果对当前结果不满意，可以用“回退”来取消操作，再重新选择区域。注意此操作不可逆。
 
-## Product Roadmap (版本演进)
-
-- [x] Execution speed optimization. 
-
-     优化执行速度，执行时间缩短2秒以上。
-
-- [x] Manually adjust the mask to zoom in or out. 
-
-     遮罩手动扩大和缩小。
-- [x] New UI. 
-     
-     新的界面。
-- [x] Manual download AI model
-
-     手动下载AI模型。
-- [x] Enlarge the image and apply a mask to a specific portion of the area. 
-     
-     放大图像并在指定区域涂抹遮罩。
-- [ ] Workflow UI. 
-  
-     工作流式界面，现有的界面可以看作工作室模式，计划两者共存。
-- [ ] Segment anything 
-  
-     调用AI模型实现目标自动识别。 已完成技术调研，由于微信算子的限制，需要接入后端。暂无开发计划。
-
+3. 支持从聊天消息中选择图片，然后点击右下角'...'，然后点击“更多打开方式”来打开“吉吉修图”小程序。
 
 ## Reference
+
+- Inpaint_wechat
+
+https://github.com/shifu-group/inpaint_wechat
 
 - The MI-GAN model
 
